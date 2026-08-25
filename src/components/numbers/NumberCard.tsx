@@ -182,9 +182,9 @@ export function NumberCard({ numberData, rank, showAiBadge = true }: NumberCardP
         </div>
       </div>
 
-      {/* Card Footer: Store Link & Actions */}
+      {/* Card Footer: Store Link, Optional Price & Actions */}
       <div className="flex items-center justify-between pt-3 border-t border-slate-800/80">
-        <div className="flex items-center gap-1 text-xs text-slate-400">
+        <div className="flex items-center gap-2">
           {numberData.buyUrl ? (
             <a
               href={numberData.buyUrl}
@@ -198,6 +198,12 @@ export function NumberCard({ numberData, rank, showAiBadge = true }: NumberCardP
           ) : (
             <span className="text-[11px] text-slate-400 font-medium">🛍️ Shopee Store</span>
           )}
+
+          {numberData.price && numberData.price > 0 ? (
+            <span className="px-2 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-black text-xs font-mono">
+              ฿{numberData.price.toLocaleString()}
+            </span>
+          ) : null}
         </div>
 
         <div className="flex items-center gap-2">

@@ -24,6 +24,7 @@ export default function BulkImportPage() {
   const [storeUrl, setStoreUrl] = useState("https://shopee.co.th/");
   const [inputText, setInputText] = useState("");
   const [provider, setProvider] = useState<Provider>("AIS");
+  const [priceInput, setPriceInput] = useState<string>("");
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -67,6 +68,7 @@ export default function BulkImportPage() {
           storeName,
           storeUrl,
           provider,
+          price: priceInput ? parseInt(priceInput.replace(/\D/g, ""), 10) : undefined,
         }),
       });
 
@@ -186,20 +188,35 @@ export default function BulkImportPage() {
               />
             </div>
 
-            {/* Provider Option */}
-            <div className="pt-2 border-t border-slate-800/80">
-              <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                🌿 ค่ายสัญญาณ (ค่าเริ่มต้นสำหรับเบอร์ที่ระบุค่ายไม่ได้)
-              </label>
-              <select
-                value={provider}
-                onChange={(e) => setProvider(e.target.value as Provider)}
-                className="w-full sm:w-1/2 rounded-2xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-xs sm:text-sm text-white focus:border-pink-400 focus:outline-none"
-              >
-                <option value="AIS">🌿 AIS 5G</option>
-                <option value="TRUE">🍒 TRUE 5G</option>
-                <option value="DTAC">🌊 DTAC</option>
-              </select>
+            {/* Provider & Optional Price Options */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-800/80">
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                  🌿 ค่ายสัญญาณ (ค่าเริ่มต้นสำหรับเบอร์ที่ระบุค่ายไม่ได้)
+                </label>
+                <select
+                  value={provider}
+                  onChange={(e) => setProvider(e.target.value as Provider)}
+                  className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-xs sm:text-sm text-white focus:border-pink-400 focus:outline-none"
+                >
+                  <option value="AIS">🌿 AIS 5G</option>
+                  <option value="TRUE">🍒 TRUE 5G</option>
+                  <option value="DTAC">🌊 DTAC</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                  💰 ราคาเบอร์ (บาท) <span className="text-slate-400 font-normal">- เผื่อมีราคา (ไม่ใส่ก็ได้)</span>
+                </label>
+                <input
+                  type="text"
+                  value={priceInput}
+                  onChange={(e) => setPriceInput(e.target.value)}
+                  placeholder="เช่น 1990 หรือ 2,490 (ปล่อยว่างไว้ได้)"
+                  className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-xs sm:text-sm text-white focus:border-pink-400 focus:outline-none font-mono"
+                />
+              </div>
             </div>
 
             {/* Error Message */}

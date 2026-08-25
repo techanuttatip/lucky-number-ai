@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const storeName: string = body.storeName || body.source || "Shopee Store";
     const storeUrl: string = body.storeUrl || body.shopUrl || `https://shopee.co.th/search?keyword=ซิมเบอร์มงคล`;
     const defaultProvider: Provider = body.provider || "AIS";
-    const defaultPrice: number = body.price ? parseInt(body.price, 10) : 1990;
+    const defaultPrice: number = body.price ? parseInt(body.price, 10) : 0;
 
     if (!rawText.trim()) {
       return NextResponse.json(
