@@ -1,5 +1,6 @@
 import { SearchCriteria, ScoredNumber, HunterJob } from "@/types";
 import { AisHunterScraper } from "./ais-hunter";
+import { huntShopeeNumbers } from "./shopee-hunter";
 import { scorePhoneNumber } from "../numerology/scorer";
 import { evaluateNumberWithAIJudge } from "../ai/ai-judge";
 import { BIRTH_RULES } from "../numerology/birth-rules";
@@ -25,9 +26,17 @@ export class HunterService {
     logs.push(`[Hunter Pipeline] เริ่มต้นรันงานค้นหา ID: ${actualJobId}`);
     logs.push(`[Hunter Pipeline] เกณฑ์: วันเกิด ${criteria.birthDay || "-"}, อาชีพ ${criteria.career || "-"}, งบ ${criteria.budgetMax ? criteria.budgetMax + " บ." : "ไม่จำกัด"}`);
 
-    // Step 1: Hunt raw numbers from AIS & Telco sources
+    // Step 1: Hunt raw numbers from AIS & Shopee Store sources
     const rawResult = await this.aisScraper.huntNumbers(criteria);
     logs.push(...rawResult.logs);
+
+    try {
+      const shopeeFound = await huntShopeeNumbers(criteria);
+      logs.push(`[Shopee Hunter] สแกนร้านค้า Shopee Mall สำเร็จ พบเบอร์ตรงเกณฑ์ ${shopeeFound.length} เบอร์`);
+      rawResult.foundNumbers.push(...shopeeFound);
+    } catch (e) {
+      console.warn("Shopee hunter error:", e);
+    }
 
     // Step 2: Run Deterministic Numerology Scoring Engine on all candidates
     logs.push(`[Rule Engine] กำลังประมวลผลคะแนนเลขศาสตร์ 0-100 สำหรับเบอร์ทั้งหมด...`);

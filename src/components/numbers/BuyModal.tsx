@@ -142,27 +142,30 @@ export function BuyModal({ numberData, isOpen, onClose }: BuyModalProps) {
             <ExternalLink className="h-4 w-4 text-amber-400 shrink-0" />
           </a>
 
-          {/* Option 3: Shopee Online Search */}
+          {/* Option 3: Shopee Online Direct Search */}
           <a
             href={shopeeSearchUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-pink-950/40 to-slate-900 border border-pink-500/30 hover:border-pink-400 transition-all hover:scale-[1.01] group"
+            className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-orange-950/40 to-slate-900 border border-orange-500/40 hover:border-orange-400 transition-all hover:scale-[1.01] group"
           >
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-500/20 text-xl">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/20 text-xl border border-orange-500/30">
                 🛍️
               </div>
               <div>
-                <div className="font-bold text-sm text-white group-hover:text-pink-300 transition-colors flex items-center gap-1.5">
-                  <span>ค้นหาใน Shopee / ร้านตัวแทนออนไลน์</span>
+                <div className="font-bold text-sm text-white group-hover:text-orange-300 transition-colors flex items-center gap-1.5">
+                  <span>ค้นหาเบอร์นี้ใน Shopee Mall & ร้านซิมมงคล</span>
+                  <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-orange-500 text-white">
+                    Shopee Direct
+                  </span>
                 </div>
                 <div className="text-[11px] text-slate-400">
-                  ค้นหาเบอร์จากร้านค้าซิมมงคลที่ได้รับการรับรอง
+                  ค้นหาเบอร์ <strong className="text-white font-mono">{formattedNum}</strong> หรือโปรซิมตรงบนแอป Shopee
                 </div>
               </div>
             </div>
-            <ExternalLink className="h-4 w-4 text-pink-400 shrink-0" />
+            <ExternalLink className="h-4 w-4 text-orange-400 shrink-0" />
           </a>
 
           {/* Option 4: Physical Store / Shop Counter */}

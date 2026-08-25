@@ -96,10 +96,10 @@ export default function HunterControlPage() {
         </div>
 
         {/* Source Scrapers Status Bar */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="cute-card p-4 border-slate-800/80 flex items-center justify-between">
             <div>
-              <div className="text-xs text-slate-400 font-bold">🌿 AIS Store Scraper</div>
+              <div className="text-xs text-slate-400 font-bold">🌿 AIS Online Store</div>
               <div className="text-xs font-bold text-emerald-300 flex items-center gap-1.5 mt-1">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
                 <span>พร้อมสแกนตลอดเวลา</span>
@@ -110,9 +110,20 @@ export default function HunterControlPage() {
 
           <div className="cute-card p-4 border-slate-800/80 flex items-center justify-between">
             <div>
-              <div className="text-xs text-slate-400 font-bold">💖 Rule Engine (ไทย)</div>
+              <div className="text-xs text-slate-400 font-bold">🛍️ Shopee Mall & VIP</div>
               <div className="text-xs font-bold text-pink-300 flex items-center gap-1.5 mt-1">
-                <span className="h-2 w-2 rounded-full bg-pink-400" />
+                <span className="h-2 w-2 rounded-full bg-pink-400 animate-ping" />
+                <span>สแกนร้านค้าซิมมงคล</span>
+              </div>
+            </div>
+            <span className="text-xs font-mono bg-slate-800 px-2.5 py-1 rounded-xl text-slate-300">Shopee Bot</span>
+          </div>
+
+          <div className="cute-card p-4 border-slate-800/80 flex items-center justify-between">
+            <div>
+              <div className="text-xs text-slate-400 font-bold">💖 Rule Engine (ไทย)</div>
+              <div className="text-xs font-bold text-amber-300 flex items-center gap-1.5 mt-1">
+                <span className="h-2 w-2 rounded-full bg-amber-400" />
                 <span>ตรวจคู่เลข 00–99 ครบ</span>
               </div>
             </div>
@@ -122,8 +133,8 @@ export default function HunterControlPage() {
           <div className="cute-card p-4 border-slate-800/80 flex items-center justify-between">
             <div>
               <div className="text-xs text-slate-400 font-bold">🔮 Google Gemini 2.5</div>
-              <div className="text-xs font-bold text-amber-300 flex items-center gap-1.5 mt-1">
-                <span className="h-2 w-2 rounded-full bg-amber-400" />
+              <div className="text-xs font-bold text-purple-300 flex items-center gap-1.5 mt-1">
+                <span className="h-2 w-2 rounded-full bg-purple-400" />
                 <span>น้อง AI ให้ความเห็นสด</span>
               </div>
             </div>
