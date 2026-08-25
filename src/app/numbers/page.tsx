@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { ScoredNumber } from "@/types";
 import { NumberCard } from "@/components/numbers/NumberCard";
 import { Search, RefreshCw, Sparkles, Filter, Store } from "lucide-react";
@@ -87,14 +88,23 @@ export default function NumbersCatalogPage() {
             </p>
           </div>
 
-          <button
-            onClick={fetchNumbers}
-            disabled={loading}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-bold transition-all self-start md:self-auto"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-            <span>รีเฟรชเบอร์ใหม่</span>
-          </button>
+          <div className="flex items-center gap-3 self-start md:self-auto">
+            <Link
+              href="/import"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 text-xs font-black transition-all shadow"
+            >
+              <span>📥 วางเบอร์จาก Shopee</span>
+            </Link>
+
+            <button
+              onClick={fetchNumbers}
+              disabled={loading}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-bold transition-all"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+              <span>รีเฟรชเบอร์</span>
+            </button>
+          </div>
         </div>
 
         {/* Filter Controls Bar */}
