@@ -2,16 +2,30 @@
 
 import { useState, useEffect } from "react";
 import { HunterJob, SearchCriteria, Provider } from "@/types";
-import { Bot, Play, Plus, Clock, CheckCircle2, Terminal, AlertCircle, RefreshCw, Sparkles, Heart } from "lucide-react";
+import {
+  Bot,
+  Play,
+  Plus,
+  Clock,
+  CheckCircle2,
+  Terminal,
+  AlertCircle,
+  RefreshCw,
+  Sparkles,
+  Heart,
+  X,
+} from "lucide-react";
 
 export default function HunterControlPage() {
   const [jobs, setJobs] = useState<HunterJob[]>([]);
   const [loading, setLoading] = useState(true);
   const [runningJobId, setRunningJobId] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // New Job Modal Form States
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [jobTitle, setJobTitle] = useState("น้องบอทล่าเบอร์เศรษฐี AIS ประจำวัน ✨");
+  const [jobTitle, setJobTitle] = useState("น้องบอทล่าเบอร์เศรษฐี Shopee & AIS ประจำวัน ✨");
   const [provider, setProvider] = useState<Provider>("AIS");
   const [budgetMax, setBudgetMax] = useState(10000);
   const [frequency, setFrequency] = useState<"once" | "hourly" | "daily">("hourly");
@@ -34,17 +48,32 @@ export default function HunterControlPage() {
     fetchJobs();
   }, []);
 
-  const handleTriggerJob = async (jobId: string, criteria: SearchCriteria) => {
+  const handleTriggerJob = async (
+    jobId: string,
+    criteria: SearchCriteria,
+    title?: string,
+    freq?: "once" | "hourly" | "daily" | "weekly"
+  ) => {
     setRunningJobId(jobId);
     try {
-      await fetch("/api/hunt", {
+      const res = await fetch("/api/hunt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobId, criteria }),
+        body: JSON.stringify({
+          jobId,
+          criteria,
+          title: title || "น้องบอทค้นหาเบอร์มงคลอัตโนมัติ",
+          frequency: freq || "hourly",
+        }),
       });
+      const data = await res.json();
+      if (data.success) {
+        setSuccessMessage(`🎉 ปล่อยบอท "${title || 'ตัวใหม่'}" สำเร็จ! สแกนเจอเบอร์มงคลเข้าคลังเรียบร้อยค่า`);
+        setTimeout(() => setSuccessMessage(null), 5000);
+      }
       await fetchJobs();
     } catch (e) {
-      console.error(e);
+      console.error("Hunt error:", e);
     } finally {
       setRunningJobId(null);
     }
@@ -52,13 +81,22 @@ export default function HunterControlPage() {
 
   const handleCreateJob = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
     const newCriteria: SearchCriteria = {
       providers: [provider],
       budgetMax,
     };
     const newJobId = `job_${Date.now()}`;
-    await handleTriggerJob(newJobId, newCriteria);
-    setIsModalOpen(false);
+
+    try {
+      await handleTriggerJob(newJobId, newCriteria, jobTitle, frequency);
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Failed to create job:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -74,7 +112,7 @@ export default function HunterControlPage() {
               ระบบบอทล่าเบอร์ <span className="cute-gold-gradient">Hunter Jobs 🌸</span>
             </h1>
             <p className="text-xs sm:text-sm text-slate-300/80 mt-1">
-              ตั้งเวลาให้น้องบอทออกไปสแกนเบอร์ใหม่จาก AIS Store และอัปเดตเข้าคลังให้อัตโนมัติค่า
+              ตั้งเวลาให้น้องบอทออกไปสแกนเบอร์ใหม่จาก AIS Store, Shopee Mall และอัปเดตเข้าคลังให้อัตโนมัติค่า
             </p>
           </div>
 
@@ -88,12 +126,26 @@ export default function HunterControlPage() {
             </button>
             <button
               onClick={fetchJobs}
+              disabled={loading}
               className="p-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800"
             >
-              <RefreshCw className="h-4 w-4" />
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </button>
           </div>
         </div>
+
+        {/* Success Toast Message */}
+        {successMessage && (
+          <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 text-xs font-bold flex items-center justify-between animate-fadeIn">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+              <span>{successMessage}</span>
+            </div>
+            <button onClick={() => setSuccessMessage(null)}>
+              <X className="h-4 w-4 text-slate-400 hover:text-white" />
+            </button>
+          </div>
+        )}
 
         {/* Source Scrapers Status Bar */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -169,7 +221,7 @@ export default function HunterControlPage() {
 
                     <div className="flex items-center gap-3">
                       <button
-                        onClick={() => handleTriggerJob(job.id, job.criteria)}
+                        onClick={() => handleTriggerJob(job.id, job.criteria, job.title, job.frequency)}
                         disabled={isRunning}
                         className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition-all disabled:opacity-50"
                       >
@@ -195,10 +247,18 @@ export default function HunterControlPage() {
           </div>
         </section>
 
-        {/* Modal */}
+        {/* Create Job Modal */}
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4">
-            <div className="w-full max-w-lg rounded-3xl border border-pink-500/30 bg-slate-900 p-6 sm:p-8 shadow-2xl">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 animate-fadeIn">
+            <div className="w-full max-w-lg rounded-3xl border border-pink-500/30 bg-slate-900 p-6 sm:p-8 shadow-2xl relative">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-5 right-5 p-2 rounded-full bg-slate-800 text-slate-400 hover:text-white"
+              >
+                <X className="h-4 w-4" />
+              </button>
+
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-2xl">🤖</span>
                 <h3 className="text-xl font-black text-white">สร้างบอทค้นหาเบอร์ตัวใหม่</h3>
@@ -252,7 +312,7 @@ export default function HunterControlPage() {
                   <input
                     type="number"
                     value={budgetMax}
-                    onChange={(e) => setBudgetMax(parseInt(e.target.value, 10))}
+                    onChange={(e) => setBudgetMax(parseInt(e.target.value, 10) || 0)}
                     className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white focus:border-pink-400 focus:outline-none"
                   />
                 </div>
@@ -267,9 +327,19 @@ export default function HunterControlPage() {
                   </button>
                   <button
                     type="submit"
-                    className="btn-cute-gold px-6 py-2.5 text-xs font-black text-slate-950 shadow"
+                    disabled={isSubmitting}
+                    className="btn-cute-gold px-6 py-2.5 text-xs font-black text-slate-950 shadow disabled:opacity-50 flex items-center gap-2"
                   >
-                    บันทึกและปล่อยบอท 🚀
+                    {isSubmitting ? (
+                      <>
+                        <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                        <span>กำลังบันทึกและเริ่มสแกน...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>บันทึกและปล่อยบอท 🚀</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </form>

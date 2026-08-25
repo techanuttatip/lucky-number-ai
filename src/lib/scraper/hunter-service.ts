@@ -19,7 +19,12 @@ export interface HunterPipelineResult {
 export class HunterService {
   private aisScraper = new AisHunterScraper();
 
-  async executeHunt(criteria: SearchCriteria, jobId?: string): Promise<HunterPipelineResult> {
+  async executeHunt(
+    criteria: SearchCriteria,
+    jobId?: string,
+    customTitle?: string,
+    frequency: "once" | "hourly" | "daily" | "weekly" = "hourly"
+  ): Promise<HunterPipelineResult> {
     const logs: string[] = [];
     const actualJobId = jobId || `hunt_${Date.now()}`;
 
@@ -67,19 +72,17 @@ export class HunterService {
       });
     }
 
-    // Sort descending by total score
+    // Sort descending by totalScore
     filteredList.sort((a, b) => b.totalScore - a.totalScore);
+    const topCandidates = filteredList.slice(0, 10);
 
     logs.push(`[Rule Engine] คัดแยกเสร็จสิ้น: เบอร์เกรดสูง (80+) มีทั้งหมด ${filteredList.filter((n) => n.totalScore >= 80).length} เบอร์`);
 
-    // Step 4: AI Judge Second Opinion for Top Candidates (Top 5)
-    const topCandidates = filteredList.slice(0, 5);
-    logs.push(`[AI Judge] กำลังเรียก AI Judge เพื่อสังเคราะห์ความเห็นที่สองสำหรับ TOP ${topCandidates.length} เบอร์...`);
-
+    // Step 4: Run AI Judge on top 2 candidates for Second Opinion
     const userBirthName = criteria.birthDay ? BIRTH_RULES[criteria.birthDay]?.nameTh : undefined;
     const userCareerName = criteria.career ? CAREER_RULES[criteria.career]?.titleTh : undefined;
 
-    for (const topNum of topCandidates) {
+    for (const topNum of topCandidates.slice(0, 2)) {
       try {
         const verdict = await evaluateNumberWithAIJudge(topNum, {
           userBirthDayName: userBirthName,
@@ -98,10 +101,10 @@ export class HunterService {
     // Update or create job record
     const jobRecord: HunterJob = {
       id: actualJobId,
-      title: `ค้นหาเบอร์ ${userCareerName || "ทั่วไป"} ${userBirthName || ""}`,
+      title: customTitle || `ค้นหาเบอร์ ${userCareerName || "ทั่วไป"} ${userBirthName || ""}`,
       criteria,
       status: "completed",
-      frequency: "once",
+      frequency,
       totalFound: rawResult.foundNumbers.length,
       topCandidatesCount: topCandidates.length,
       lastRunAt: new Date().toISOString(),
