@@ -17,6 +17,7 @@ export interface ScoreOptions {
   provider?: Provider;
   source?: string;
   price?: number;
+  priceDisplay?: string;
   packageDetail?: string;
   buyUrl?: string;
   birthDay?: BirthDay;
@@ -34,6 +35,7 @@ export function scorePhoneNumber(
   const provider = options.provider || "AIS";
   const source = options.source || (provider === "AIS" ? "AIS Online Store" : provider === "TRUE" ? "True Store" : "Shopee Mall");
   const price = options.price ?? 0;
+  const priceDisplay = options.priceDisplay || (price > 0 ? price.toLocaleString() : undefined);
   const packageDetail = options.packageDetail || "แพ็กเกจมาตรฐาน 5G";
   const buyUrl = options.buyUrl || `https://store.ais.co.th/th/number-search?q=${cleanNumber}`;
 
@@ -208,6 +210,7 @@ export function scorePhoneNumber(
     provider,
     source,
     price,
+    priceDisplay,
     packageDetail,
     buyUrl,
     totalSum,

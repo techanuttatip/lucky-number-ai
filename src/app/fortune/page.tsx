@@ -468,9 +468,9 @@ export default function PersonalFortunePage() {
                             )}
                           </button>
 
-                          {m.number.price && m.number.price > 0 ? (
+                          {m.number.priceDisplay || (m.number.price && m.number.price > 0) ? (
                             <span className="font-mono font-bold text-emerald-300 text-xs px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                              ฿{m.number.price.toLocaleString()}
+                              ฿{m.number.priceDisplay || m.number.price.toLocaleString()}
                             </span>
                           ) : null}
                         </div>

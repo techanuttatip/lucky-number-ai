@@ -199,9 +199,9 @@ export function NumberCard({ numberData, rank, showAiBadge = true }: NumberCardP
             <span className="text-[11px] text-slate-400 font-medium">🛍️ Shopee Store</span>
           )}
 
-          {numberData.price && numberData.price > 0 ? (
+          {numberData.priceDisplay || (numberData.price && numberData.price > 0) ? (
             <span className="px-2 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-black text-xs font-mono">
-              ฿{numberData.price.toLocaleString()}
+              ฿{numberData.priceDisplay || numberData.price.toLocaleString()}
             </span>
           ) : null}
         </div>

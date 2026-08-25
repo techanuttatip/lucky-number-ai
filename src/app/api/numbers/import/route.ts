@@ -6,6 +6,47 @@ import { supabase } from "@/lib/supabase/client";
 
 export const dynamic = "force-dynamic";
 
+function parseSmartPrice(input: any): { price: number; priceDisplay?: string } {
+  if (!input) return { price: 0 };
+  if (typeof input === "number") {
+    return { price: input, priceDisplay: input > 0 ? input.toLocaleString() : undefined };
+  }
+  const str = String(input).trim();
+  if (!str) return { price: 0 };
+
+  // Check if it's a range like "1599 - 5999" or "1,599 - 5,999"
+  if (str.includes("-")) {
+    const parts = str
+      .split("-")
+      .map((p) => {
+        const clean = p.replace(/\D/g, "");
+        return clean ? parseInt(clean, 10) : NaN;
+      })
+      .filter((n) => !isNaN(n));
+
+    if (parts.length >= 2) {
+      const min = parts[0];
+      const max = parts[1];
+      return {
+        price: min,
+        priceDisplay: `${min.toLocaleString()} - ${max.toLocaleString()}`,
+      };
+    }
+  }
+
+  // Single price
+  const clean = str.replace(/\D/g, "");
+  const num = clean ? parseInt(clean, 10) : 0;
+  if (!isNaN(num) && num > 0) {
+    return {
+      price: num,
+      priceDisplay: num.toLocaleString(),
+    };
+  }
+
+  return { price: 0 };
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -13,7 +54,7 @@ export async function POST(req: NextRequest) {
     const storeName: string = body.storeName || body.source || "Shopee Store";
     const storeUrl: string = body.storeUrl || body.shopUrl || `https://shopee.co.th/search?keyword=ซิมเบอร์มงคล`;
     const defaultProvider: Provider = body.provider || "AIS";
-    const defaultPrice: number = body.price ? parseInt(body.price, 10) : 0;
+    const { price: defaultPrice, priceDisplay } = parseSmartPrice(body.price || body.priceDisplay);
 
     if (!rawText.trim()) {
       return NextResponse.json(
@@ -78,6 +119,7 @@ export async function POST(req: NextRequest) {
         provider: detectedProv,
         source: storeName,
         price: defaultPrice,
+        priceDisplay: priceDisplay,
         packageDetail: `${storeName} • ผลรวม 10 หลัก`,
         buyUrl: directBuyUrl,
       });

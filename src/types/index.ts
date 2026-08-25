@@ -100,6 +100,7 @@ export interface ScoredNumber {
   provider: Provider;
   source?: string;           // e.g. "Shopee Mall", "AIS Online Store", "Berthongsuk"
   price: number;
+  priceDisplay?: string;     // e.g. "1,599 - 5,999" or "1,990"
   packageDetail?: string;
   buyUrl?: string;
   totalSum: number;

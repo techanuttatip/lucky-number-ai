@@ -107,7 +107,7 @@ export default function NumberManagerPage() {
           storeName: storeNameToSubmit,
           storeUrl: storeUrlToSubmit,
           provider: bulkProvider,
-          price: priceToSubmit ? parseInt(priceToSubmit.replace(/\D/g, ""), 10) : undefined,
+          price: priceToSubmit || undefined,
         }),
       });
 
@@ -329,13 +329,13 @@ export default function NumberManagerPage() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-200 mb-1.5">
-                    💰 ราคาเบอร์ (บาท) <span className="text-slate-400 font-normal">- ไม่ใส่ก็ได้</span>
+                    💰 ราคาเบอร์ (บาท) <span className="text-slate-400 font-normal">- ใส่เป็นราคาหรือช่วงราคาได้</span>
                   </label>
                   <input
                     type="text"
                     value={singlePrice}
                     onChange={(e) => setSinglePrice(e.target.value)}
-                    placeholder="เช่น 1990 หรือ 4,900"
+                    placeholder="เช่น 1599 - 5999 หรือ 1,990"
                     className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-xs sm:text-sm text-white focus:border-pink-400 focus:outline-none font-mono"
                   />
                 </div>
@@ -362,13 +362,13 @@ export default function NumberManagerPage() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                    💰 ราคาเบอร์ (บาท) <span className="text-slate-400 font-normal">- สำหรับทุกเบอร์ในชุดนี้ (ไม่ใส่ก็ได้)</span>
+                    💰 ราคาเบอร์ (บาท) <span className="text-slate-400 font-normal">- ใส่เป็นราคาหรือช่วงราคาได้</span>
                   </label>
                   <input
                     type="text"
                     value={bulkPrice}
                     onChange={(e) => setBulkPrice(e.target.value)}
-                    placeholder="เช่น 1990 หรือ 2,490"
+                    placeholder="เช่น 1599 - 5999 หรือ 1,990"
                     className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-xs sm:text-sm text-white focus:border-pink-400 focus:outline-none font-mono"
                   />
                 </div>
@@ -459,8 +459,10 @@ export default function NumberManagerPage() {
                   </div>
 
                   <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 text-xs">
-                    {num.price && num.price > 0 ? (
-                      <span className="font-mono font-bold text-emerald-300">฿{num.price.toLocaleString()}</span>
+                    {num.priceDisplay || (num.price && num.price > 0) ? (
+                      <span className="font-mono font-bold text-emerald-300">
+                        ฿{num.priceDisplay || num.price.toLocaleString()}
+                      </span>
                     ) : (
                       <span className="text-[11px] text-slate-500">-</span>
                     )}
