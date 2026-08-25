@@ -1,6 +1,8 @@
+import { Provider } from "@/types";
+
 export interface RawCandidateNumber {
   rawNumber: string;
-  provider: 'AIS' | 'TRUE' | 'DTAC';
+  provider: Provider;
   price: number;
   packageDetail: string;
   buyUrl: string;

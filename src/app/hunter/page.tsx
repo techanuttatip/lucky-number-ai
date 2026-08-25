@@ -14,6 +14,9 @@ import {
   Sparkles,
   Heart,
   X,
+  ShoppingBag,
+  Download,
+  Search,
 } from "lucide-react";
 
 export default function HunterControlPage() {
@@ -22,6 +25,13 @@ export default function HunterControlPage() {
   const [runningJobId, setRunningJobId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Shopee Importer States
+  const [shopeeUrlInput, setShopeeUrlInput] = useState(
+    "https://shopee.co.th/search?keyword=ซิมเบอร์มงคล"
+  );
+  const [isShopeeIngesting, setIsShopeeIngesting] = useState(false);
+  const [shopeeIngestLogs, setShopeeIngestLogs] = useState<string[]>([]);
 
   // New Job Modal Form States
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -96,6 +106,39 @@ export default function HunterControlPage() {
       console.error("Failed to create job:", err);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleShopeeIngest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!shopeeUrlInput.trim()) return;
+
+    setIsShopeeIngesting(true);
+    setShopeeIngestLogs(["[Shopee Scraper] เริ่มต้นดึงข้อมูลจาก URL..."]);
+
+    try {
+      const res = await fetch("/api/hunt/shopee", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: shopeeUrlInput }),
+      });
+      const json = await res.json();
+
+      if (json.success && json.data) {
+        setShopeeIngestLogs(json.data.logs || []);
+        setSuccessMessage(
+          `🎉 ดูดเบอร์จาก Shopee สำเร็จ! เพิ่มเบอร์เข้าคลังและคำนวณคะแนนครบ ${json.data.scannedCount} เบอร์แล้วค่า 🛍️✨`
+        );
+        setTimeout(() => setSuccessMessage(null), 6000);
+        await fetchJobs();
+      } else {
+        setShopeeIngestLogs(["❌ เกิดข้อผิดพลาดในการดึงข้อมูลจาก Shopee"]);
+      }
+    } catch (err) {
+      console.error(err);
+      setShopeeIngestLogs(["❌ ไม่สามารถเชื่อมต่อ API ได้"]);
+    } finally {
+      setIsShopeeIngesting(false);
     }
   };
 
@@ -192,6 +235,71 @@ export default function HunterControlPage() {
             </div>
             <span className="text-xs font-mono bg-slate-800 px-2.5 py-1 rounded-xl text-slate-300">Gemini AI</span>
           </div>
+        </div>
+
+        {/* Shopee On-Demand Live Extractor Box */}
+        <div className="cute-card p-6 border-orange-500/30 bg-gradient-to-br from-orange-950/20 via-slate-900 to-slate-900 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-orange-500/20 text-xl border border-orange-500/30">
+                🛍️
+              </div>
+              <div>
+                <h2 className="text-base font-black text-white flex items-center gap-2">
+                  <span>ดูดเบอร์สดจาก Shopee Search URL เข้าคลังทันที</span>
+                  <span className="px-2.5 py-0.5 rounded-full text-[9px] font-black bg-orange-500 text-white">
+                    Live Extractor
+                  </span>
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  วาง URL ผลค้นหาจาก Shopee เพื่อดึงเบอร์ วิเคราะห์คะแนน 0–100 และเซฟลง Supabase อัตโนมัติ
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleShopeeIngest} className="flex flex-col sm:flex-row gap-3 pt-1">
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-orange-400" />
+              <input
+                type="text"
+                value={shopeeUrlInput}
+                onChange={(e) => setShopeeUrlInput(e.target.value)}
+                placeholder="https://shopee.co.th/search?keyword=ซิมเบอร์มงคล หรือคีย์เวิร์ด..."
+                className="w-full rounded-2xl border border-orange-500/40 bg-slate-950 pl-10 pr-4 py-3 text-xs sm:text-sm text-white focus:border-orange-400 focus:outline-none font-mono"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isShopeeIngesting}
+              className="px-6 py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 text-xs font-black transition-all shadow-lg flex items-center justify-center gap-2 shrink-0 disabled:opacity-50"
+            >
+              {isShopeeIngesting ? (
+                <>
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                  <span>กำลังดูดเบอร์และวิเคราะห์...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4" />
+                  <span>🚀 ดูดเบอร์และวิเคราะห์เข้าคลัง</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Shopee Ingestion Logs Box */}
+          {shopeeIngestLogs.length > 0 && (
+            <div className="rounded-2xl bg-slate-950 p-4 font-mono text-[11px] text-slate-300 space-y-1 border border-orange-500/20 max-h-36 overflow-y-auto">
+              <div className="text-[10px] text-orange-400 font-bold mb-1">📋 บันทึกการทำงาน Live Extraction:</div>
+              {shopeeIngestLogs.map((log, idx) => (
+                <div key={idx} className="flex items-start gap-1.5">
+                  <span className="text-orange-400">&gt;</span>
+                  <span>{log}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Hunter Jobs List */}
