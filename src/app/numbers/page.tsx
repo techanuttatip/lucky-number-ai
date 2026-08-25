@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import { ScoredNumber } from "@/types";
 import { NumberCard } from "@/components/numbers/NumberCard";
-import { Search, RefreshCw, Sparkles, Filter } from "lucide-react";
+import { Search, RefreshCw, Sparkles, Filter, Store } from "lucide-react";
 
 export default function NumbersCatalogPage() {
   const [numbers, setNumbers] = useState<ScoredNumber[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProvider, setSelectedProvider] = useState<string>("ALL");
+  const [selectedSource, setSelectedSource] = useState<string>("ALL");
   const [minScore, setMinScore] = useState<number>(0);
   const [topOnly, setTopOnly] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<"score_desc" | "price_asc" | "price_desc" | "sum_asc">("score_desc");
@@ -35,13 +36,30 @@ export default function NumbersCatalogPage() {
 
   const filteredNumbers = numbers
     .filter((n) => {
+      // 1. Provider Filter
       if (selectedProvider !== "ALL" && n.provider !== selectedProvider) return false;
+
+      // 2. Store / Source Filter
+      if (selectedSource !== "ALL") {
+        const src = (n.source || "").toLowerCase();
+        if (selectedSource === "SHOPEE" && !src.includes("shopee")) return false;
+        if (selectedSource === "AIS" && !src.includes("ais")) return false;
+        if (selectedSource === "TRUE" && !src.includes("true")) return false;
+        if (selectedSource === "BERTHONGSUK" && !src.includes("berthongsuk")) return false;
+      }
+
+      // 3. Min Score
       if (minScore > 0 && n.totalScore < minScore) return false;
+
+      // 4. Top Only
       if (topOnly && !n.isTopCandidate) return false;
+
+      // 5. Search query in number
       if (searchQuery.trim()) {
         const q = searchQuery.replace(/\D/g, "");
         if (q && !n.rawNumber.includes(q)) return false;
       }
+
       return true;
     })
     .sort((a, b) => {
@@ -65,7 +83,7 @@ export default function NumbersCatalogPage() {
               ส่องคลังเบอร์มงคล <span className="cute-gold-gradient">Live Feed 🌸</span>
             </h1>
             <p className="text-xs sm:text-sm text-slate-300/80 mt-1">
-              เลือกดูเบอร์จาก AIS และเครือข่าย พร้อมคะแนนความปังแบบเรียลไทม์
+              เลือกดูเบอร์จาก Shopee Mall, AIS Store, True และร้านเฉพาะทาง พร้อมคะแนนความปังแบบเรียลไทม์
             </p>
           </div>
 
@@ -81,7 +99,7 @@ export default function NumbersCatalogPage() {
 
         {/* Filter Controls Bar */}
         <div className="cute-card p-5 sm:p-6 mb-8 border-slate-800/80 space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Search query */}
             <div>
               <label className="block text-xs font-bold text-slate-300 mb-1.5">
@@ -97,6 +115,24 @@ export default function NumbersCatalogPage() {
                   className="w-full rounded-2xl border border-slate-700 bg-slate-950 pl-10 pr-4 py-2 text-xs sm:text-sm text-white focus:border-pink-400 focus:outline-none"
                 />
               </div>
+            </div>
+
+            {/* Store / Shop Source Dropdown */}
+            <div>
+              <label className="block text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1">
+                <span>🏪 เลือกร้านค้า / แหล่งที่มา</span>
+              </label>
+              <select
+                value={selectedSource}
+                onChange={(e) => setSelectedSource(e.target.value)}
+                className="w-full rounded-2xl border border-orange-500/40 bg-slate-950 px-3.5 py-2 text-xs sm:text-sm text-white focus:border-orange-400 focus:outline-none font-medium"
+              >
+                <option value="ALL">🏪 ทุกร้านค้า / แหล่งที่มา</option>
+                <option value="SHOPEE">🛍️ Shopee Mall & VIP</option>
+                <option value="AIS">🌿 AIS Online Store</option>
+                <option value="TRUE">🍒 True Official Store</option>
+                <option value="BERTHONGSUK">🔮 ร้านเบอร์ทองสุข</option>
+              </select>
             </div>
 
             {/* Provider Filter */}
@@ -119,7 +155,7 @@ export default function NumbersCatalogPage() {
             {/* Min Score Filter */}
             <div>
               <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                ⭐ คะแนนขั้นต่ำ: <strong className="text-amber-300">{minScore > 0 ? `${minScore}+` : "ทั้งหมด"}</strong>
+                ⭐ คะแนน: <strong className="text-amber-300">{minScore > 0 ? `${minScore}+` : "ทั้งหมด"}</strong>
               </label>
               <select
                 value={minScore}
@@ -169,6 +205,11 @@ export default function NumbersCatalogPage() {
         <div className="flex items-center justify-between mb-6 text-xs text-slate-400">
           <span>
             เจอน้องเบอร์ทั้งหมด <strong className="text-white font-bold">{filteredNumbers.length}</strong> เบอร์ค่ะ ✨
+            {selectedSource !== "ALL" && (
+              <span className="text-orange-300 font-bold ml-2">
+                (กรองเฉพาะ: {selectedSource === "SHOPEE" ? "🛍️ Shopee Mall" : selectedSource === "AIS" ? "🌿 AIS Online Store" : selectedSource === "TRUE" ? "🍒 True Store" : "🔮 เบอร์ทองสุข"})
+              </span>
+            )}
           </span>
         </div>
 
@@ -184,7 +225,7 @@ export default function NumbersCatalogPage() {
             <div className="text-4xl mb-2">🥺</div>
             <h3 className="text-base font-bold text-white mb-1">ไม่พบน้องเบอร์ที่ตรงกับเงื่อนไขนี้เลยจ้า</h3>
             <p className="text-xs text-slate-400 max-w-sm mx-auto">
-              ลองปรับลดตัวกรองคะแนน หรือขยายเกณฑ์การค้นหาเพื่อดูเบอร์น่ารักๆ เพิ่มเติมนะคะ
+              ลองเปลี่ยนร้านค้า หรือปรับลดตัวกรองคะแนนเพื่อดูเบอร์น่ารักๆ เพิ่มเติมนะคะ
             </p>
           </div>
         )}

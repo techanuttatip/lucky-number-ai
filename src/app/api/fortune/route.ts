@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
       goals = ["wealth"],
       budgetMax = 50000,
       provider = "ALL",
+      source = "ALL",
     } = body;
 
     // 1. Calculate Name Numerology
@@ -109,6 +110,13 @@ export async function POST(req: NextRequest) {
     // Filter and Sort by personalized total score
     let matchedNumbers = personalizedNumbers.filter((n) => {
       if (provider !== "ALL" && n.provider !== provider) return false;
+      if (source !== "ALL") {
+        const src = (n.source || "").toLowerCase();
+        if (source === "SHOPEE" && !src.includes("shopee")) return false;
+        if (source === "AIS" && !src.includes("ais")) return false;
+        if (source === "TRUE" && !src.includes("true")) return false;
+        if (source === "BERTHONGSUK" && !src.includes("berthongsuk")) return false;
+      }
       if (budgetMax > 0 && n.price > budgetMax) return false;
       return true;
     });

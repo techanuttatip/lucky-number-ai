@@ -15,6 +15,7 @@ import { formatPhoneNumber } from "../utils";
 export interface ScoreOptions {
   id?: string;
   provider?: Provider;
+  source?: string;
   price?: number;
   packageDetail?: string;
   buyUrl?: string;
@@ -31,6 +32,7 @@ export function scorePhoneNumber(
   const formattedNumber = formatPhoneNumber(cleanNumber);
   const id = options.id || `num_${cleanNumber}_${Date.now()}`;
   const provider = options.provider || "AIS";
+  const source = options.source || (provider === "AIS" ? "AIS Online Store" : provider === "TRUE" ? "True Store" : "Shopee Mall");
   const price = options.price ?? 0;
   const packageDetail = options.packageDetail || "แพ็กเกจมาตรฐาน 5G";
   const buyUrl = options.buyUrl || `https://store.ais.co.th/th/number-search?q=${cleanNumber}`;
@@ -204,6 +206,7 @@ export function scorePhoneNumber(
     rawNumber: cleanNumber,
     formattedNumber,
     provider,
+    source,
     price,
     packageDetail,
     buyUrl,

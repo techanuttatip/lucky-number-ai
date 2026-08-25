@@ -96,6 +96,7 @@ export interface ScoredNumber {
   rawNumber: string;         // e.g. "0812345678"
   formattedNumber: string;   // e.g. "081-234-5678"
   provider: Provider;
+  source?: string;           // e.g. "Shopee Mall", "AIS Online Store", "Berthongsuk"
   price: number;
   packageDetail?: string;
   buyUrl?: string;

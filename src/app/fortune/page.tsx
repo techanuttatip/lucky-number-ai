@@ -36,6 +36,7 @@ export default function PersonalFortunePage() {
   ]);
   const [budgetMax, setBudgetMax] = useState<number>(10000);
   const [provider, setProvider] = useState<string>("ALL");
+  const [source, setSource] = useState<string>("ALL");
 
   // Results State
   const [loading, setLoading] = useState(false);
@@ -66,6 +67,7 @@ export default function PersonalFortunePage() {
           goals: selectedGoals,
           budgetMax,
           provider,
+          source,
         }),
       });
       const json = await res.json();
@@ -228,8 +230,8 @@ export default function PersonalFortunePage() {
               </div>
             </div>
 
-            {/* Step 5: Budget & Provider */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-800/80">
+            {/* Step 5: Budget, Provider, & Store Source */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-800/80">
               <div>
                 <label className="block text-xs font-bold text-slate-300 mb-1.5">
                   งบประมาณสูงสุด (บาท)
@@ -259,6 +261,23 @@ export default function PersonalFortunePage() {
                   <option value="AIS">🌿 AIS 5G</option>
                   <option value="TRUE">🍒 TRUE 5G</option>
                   <option value="DTAC">🌊 DTAC</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                  🏪 เลือกร้านค้า / แหล่งที่มา
+                </label>
+                <select
+                  value={source}
+                  onChange={(e) => setSource(e.target.value)}
+                  className="w-full rounded-2xl border border-orange-500/40 bg-slate-950 px-4 py-2.5 text-xs sm:text-sm text-white focus:border-orange-400 focus:outline-none font-medium"
+                >
+                  <option value="ALL">🏪 ทุกร้านค้า / แหล่งที่มา</option>
+                  <option value="SHOPEE">🛍️ Shopee Mall & VIP</option>
+                  <option value="AIS">🌿 AIS Online Store</option>
+                  <option value="TRUE">🍒 True Official Store</option>
+                  <option value="BERTHONGSUK">🔮 ร้านเบอร์ทองสุข</option>
                 </select>
               </div>
             </div>

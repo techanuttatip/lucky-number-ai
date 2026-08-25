@@ -48,12 +48,23 @@ export function NumberCard({ numberData, rank, showAiBadge = true }: NumberCardP
 
       {/* Header: Provider & Score */}
       <div className="flex items-center justify-between gap-3 mb-3">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           <span className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border ${badgeInfo.bg} ${badgeInfo.text} ${badgeInfo.border}`}>
             <span>{badgeInfo.emoji}</span>
             <span>{numberData.provider}</span>
           </span>
-          <span className="text-xs text-slate-400 font-medium">
+          {numberData.source && (
+            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
+              numberData.source.includes("Shopee")
+                ? "bg-orange-500/20 text-orange-300 border-orange-500/30"
+                : numberData.source.includes("Berthongsuk")
+                ? "bg-purple-500/20 text-purple-300 border-purple-500/30"
+                : "bg-slate-800 text-slate-300 border-slate-700"
+            }`}>
+              {numberData.source.includes("Shopee") ? "🛍️ Shopee" : numberData.source.includes("Berthongsuk") ? "🔮 เบอร์ทองสุข" : "🌿 ค่ายตรง"}
+            </span>
+          )}
+          <span className="text-xs text-slate-400 font-medium hidden sm:inline">
             ผลรวม <strong className="text-amber-300">{numberData.totalSum}</strong> ({numberData.sumRule?.tier || "A"})
           </span>
         </div>
