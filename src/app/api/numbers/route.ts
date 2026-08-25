@@ -88,15 +88,47 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: list,
       total: list.length,
-      source: "supabase",
+      data: list,
     });
   } catch (error: any) {
-    console.error("Error in numbers API:", error);
+    console.error("Error in /api/numbers:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to retrieve numbers" },
+      { success: false, error: error.message || "Failed to fetch numbers" },
       { status: 500 }
     );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const rawNumber = searchParams.get("rawNumber");
+    const clearAll = searchParams.get("clearAll") === "true";
+
+    if (clearAll) {
+      db.clearAllNumbers();
+      try {
+        await supabase.from("numbers").delete().neq("raw_number", "0000000000");
+      } catch (e) {
+        console.warn("Supabase clear error:", e);
+      }
+      return NextResponse.json({ success: true, message: "ลบเบอร์ทั้งหมดเรียบร้อยแล้ว" });
+    }
+
+    if (rawNumber) {
+      const clean = rawNumber.replace(/\D/g, "");
+      db.deleteNumber(clean);
+      try {
+        await supabase.from("numbers").delete().eq("raw_number", clean);
+      } catch (e) {
+        console.warn("Supabase delete single error:", e);
+      }
+      return NextResponse.json({ success: true, message: `ลบเบอร์ ${clean} เรียบร้อยแล้ว` });
+    }
+
+    return NextResponse.json({ success: false, error: "กรุณาระบุ rawNumber หรือ clearAll=true" }, { status: 400 });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }

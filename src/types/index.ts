@@ -20,6 +20,8 @@ export type CareerCategory =
   | 'spiritual_occult'    // สายมู โหราศาสตร์ พระเครื่อง
   | 'student_academic';   // นักเรียน นักวิชาการ ครูอาจารย์
 
+export type Career = CareerCategory | string;
+
 export type LifeGoal = 
   | 'wealth'        // ร่ำรวย ดึงดูดทรัพย์ รับเงินก้อน
   | 'charm_love'    // มหาเสน่ห์ เมตตามหานิยม ความรักสมหวัง

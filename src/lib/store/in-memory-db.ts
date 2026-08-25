@@ -79,6 +79,23 @@ class InMemoryDatabase {
     items.forEach((item) => this.numbers.set(item.id, item));
   }
 
+  deleteNumber(idOrRaw: string): boolean {
+    const clean = idOrRaw.replace(/\D/g, "");
+    const entries = Array.from(this.numbers.entries());
+    for (let i = 0; i < entries.length; i++) {
+      const [id, num] = entries[i];
+      if (id === idOrRaw || num.rawNumber === clean) {
+        this.numbers.delete(id);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  clearAllNumbers() {
+    this.numbers.clear();
+  }
+
   getAllJobs(): HunterJob[] {
     return Array.from(this.jobs.values());
   }
