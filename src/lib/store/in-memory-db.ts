@@ -1,5 +1,4 @@
 import { ScoredNumber, HunterJob, SearchCriteria } from "@/types";
-import { INITIAL_CANDIDATE_POOL } from "../scraper/mock-pool";
 import { scorePhoneNumber } from "../numerology/scorer";
 import shopeePoolData from "../data/shopee-stores-pool.json";
 
@@ -16,26 +15,13 @@ class InMemoryDatabase {
   private initDefaultPool() {
     if (this.isInitialized) return;
     
-    // Seed default candidate pool
-    INITIAL_CANDIDATE_POOL.forEach((item) => {
-      const scored = scorePhoneNumber(item.rawNumber, {
-        id: `num_${item.rawNumber}`,
-        provider: item.provider,
-        price: item.price,
-        source: item.source,
-        packageDetail: item.packageDetail,
-        buyUrl: item.buyUrl,
-      });
-      this.numbers.set(scored.id, scored);
-    });
-
-    // Seed 649 Shopee Store numbers (Mobilesphone, MoranetShop, 7SIMNET)
+    // Seed strictly and exclusively from user's Shopee store numbers (Mobilesphone, MoranetShop, 7SIMNET)
     if (Array.isArray(shopeePoolData)) {
       shopeePoolData.forEach((item: any) => {
         const scored = scorePhoneNumber(item.rawNumber, {
           id: `shopee_${item.rawNumber}`,
           provider: item.provider,
-          price: item.price,
+          price: item.price || 0,
           source: item.source,
           packageDetail: `${item.source} • ผลรวม ${item.totalSum}`,
           buyUrl: item.buyUrl || `https://shopee.co.th/search?keyword=ซิมเบอร์มงคล+${item.rawNumber}`,

@@ -24,7 +24,6 @@ export default function BulkImportPage() {
   const [storeUrl, setStoreUrl] = useState("https://shopee.co.th/");
   const [inputText, setInputText] = useState("");
   const [provider, setProvider] = useState<Provider>("AIS");
-  const [defaultPrice, setDefaultPrice] = useState(1990);
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -68,7 +67,6 @@ export default function BulkImportPage() {
           storeName,
           storeUrl,
           provider,
-          price: defaultPrice,
         }),
       });
 
@@ -188,34 +186,20 @@ export default function BulkImportPage() {
               />
             </div>
 
-            {/* Price & Provider Options */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-800/80">
-              <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                  🌿 ค่ายสัญญาณ (ค่าเริ่มต้น)
-                </label>
-                <select
-                  value={provider}
-                  onChange={(e) => setProvider(e.target.value as Provider)}
-                  className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-xs sm:text-sm text-white focus:border-pink-400 focus:outline-none"
-                >
-                  <option value="AIS">🌿 AIS 5G</option>
-                  <option value="TRUE">🍒 TRUE 5G</option>
-                  <option value="DTAC">🌊 DTAC</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                  💰 ราคาโดยประมาณ (บาท)
-                </label>
-                <input
-                  type="number"
-                  value={defaultPrice}
-                  onChange={(e) => setDefaultPrice(parseInt(e.target.value, 10) || 0)}
-                  className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-xs sm:text-sm text-white focus:border-pink-400 focus:outline-none"
-                />
-              </div>
+            {/* Provider Option */}
+            <div className="pt-2 border-t border-slate-800/80">
+              <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                🌿 ค่ายสัญญาณ (ค่าเริ่มต้นสำหรับเบอร์ที่ระบุค่ายไม่ได้)
+              </label>
+              <select
+                value={provider}
+                onChange={(e) => setProvider(e.target.value as Provider)}
+                className="w-full sm:w-1/2 rounded-2xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-xs sm:text-sm text-white focus:border-pink-400 focus:outline-none"
+              >
+                <option value="AIS">🌿 AIS 5G</option>
+                <option value="TRUE">🍒 TRUE 5G</option>
+                <option value="DTAC">🌊 DTAC</option>
+              </select>
             </div>
 
             {/* Error Message */}

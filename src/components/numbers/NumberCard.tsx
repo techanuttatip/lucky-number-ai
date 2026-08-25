@@ -182,27 +182,25 @@ export function NumberCard({ numberData, rank, showAiBadge = true }: NumberCardP
         </div>
       </div>
 
-      {/* Card Footer: Price & Actions */}
+      {/* Card Footer: Store Link & Actions */}
       <div className="flex items-center justify-between pt-3 border-t border-slate-800/80">
-        <div>
-          <span className="text-[10px] text-slate-400 block">ราคาเบอร์</span>
-          <span className="text-base font-black text-emerald-300">
-            {numberData.price > 0 ? formatCurrency(numberData.price) : "ฟรีพร้อมแพ็กเกจ"}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {numberData.buyUrl && (
+        <div className="flex items-center gap-1 text-xs text-slate-400">
+          {numberData.buyUrl ? (
             <a
               href={numberData.buyUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 rounded-2xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
-              title="เปิดดูที่หน้าค่าย"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 border border-orange-500/30 text-xs font-bold transition-all"
             >
-              <ExternalLink className="h-4 w-4" />
+              <span>🛒 สั่งซื้อที่ Shopee</span>
+              <ExternalLink className="h-3.5 w-3.5" />
             </a>
+          ) : (
+            <span className="text-[11px] text-slate-400 font-medium">🛍️ Shopee Store</span>
           )}
+        </div>
+
+        <div className="flex items-center gap-2">
           <Link
             href={`/numbers/${numberData.id}`}
             className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-slate-950 font-black text-xs transition-all shadow hover:scale-105"

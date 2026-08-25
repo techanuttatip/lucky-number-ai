@@ -14,7 +14,7 @@ export default function NumbersCatalogPage() {
   const [selectedSource, setSelectedSource] = useState<string>("ALL");
   const [minScore, setMinScore] = useState<number>(0);
   const [topOnly, setTopOnly] = useState<boolean>(false);
-  const [sortBy, setSortBy] = useState<"score_desc" | "price_asc" | "price_desc" | "sum_asc">("score_desc");
+  const [sortBy, setSortBy] = useState<"score_desc" | "sum_asc">("score_desc");
 
   const fetchNumbers = async () => {
     setLoading(true);
@@ -68,8 +68,6 @@ export default function NumbersCatalogPage() {
     })
     .sort((a, b) => {
       if (sortBy === "score_desc") return b.totalScore - a.totalScore;
-      if (sortBy === "price_asc") return a.price - b.price;
-      if (sortBy === "price_desc") return b.price - a.price;
       if (sortBy === "sum_asc") return a.totalSum - b.totalSum;
       return 0;
     });
@@ -195,9 +193,7 @@ export default function NumbersCatalogPage() {
                 className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs sm:text-sm text-white focus:border-pink-400 focus:outline-none"
               >
                 <option value="score_desc">คะแนนความมงคล (มากไปน้อย)</option>
-                <option value="price_asc">ราคาเบอร์ (ประหยัดก่อน)</option>
-                <option value="price_desc">ราคาเบอร์ (พรีเมียมก่อน)</option>
-                <option value="sum_asc">ผลรวมตัวเลข</option>
+                <option value="sum_asc">ผลรวมตัวเลข (น้อยไปมาก)</option>
               </select>
             </div>
           </div>

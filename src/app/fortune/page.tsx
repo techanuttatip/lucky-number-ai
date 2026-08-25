@@ -230,27 +230,27 @@ export default function PersonalFortunePage() {
               </div>
             </div>
 
-            {/* Step 5: Budget, Provider, & Store Source */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-800/80">
+            {/* Step 5: Provider & Store Source */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-800/80">
               <div>
                 <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                  งบประมาณสูงสุด (บาท)
+                  🏪 เลือกร้านค้าใน Shopee
                 </label>
                 <select
-                  value={budgetMax}
-                  onChange={(e) => setBudgetMax(parseInt(e.target.value, 10))}
-                  className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-xs sm:text-sm text-white focus:border-pink-400 focus:outline-none"
+                  value={source}
+                  onChange={(e) => setSource(e.target.value)}
+                  className="w-full rounded-2xl border border-orange-500/40 bg-slate-950 px-4 py-2.5 text-xs sm:text-sm text-white focus:border-orange-400 focus:outline-none font-medium"
                 >
-                  <option value={3000}>ไม่เกิน 3,000 บาท (เบอร์เริ่มต้น)</option>
-                  <option value={10000}>ไม่เกิน 10,000 บาท (เบอร์สวยพรีเมียม)</option>
-                  <option value={30000}>ไม่เกิน 30,000 บาท (เบอร์มังกร / เกรด VIP)</option>
-                  <option value={100000}>ไม่จำกัดงบประมาณ</option>
+                  <option value="ALL">🏪 รวมทุกร้านค้า Shopee (649+ เบอร์)</option>
+                  <option value="Mobilesphone">📱 ร้าน Mobilesphone (Shopee)</option>
+                  <option value="MoranetShop">💎 ร้าน MoranetShop (Shopee)</option>
+                  <option value="7SIMNET">⚡ ร้าน 7SIMNET (Shopee)</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                  ค่ายสัญญาณที่ต้องการ
+                  🌿 ค่ายสัญญาณที่ต้องการ
                 </label>
                 <select
                   value={provider}
@@ -261,23 +261,6 @@ export default function PersonalFortunePage() {
                   <option value="AIS">🌿 AIS 5G</option>
                   <option value="TRUE">🍒 TRUE 5G</option>
                   <option value="DTAC">🌊 DTAC</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                  🏪 เลือกร้านค้า / แหล่งที่มา
-                </label>
-                <select
-                  value={source}
-                  onChange={(e) => setSource(e.target.value)}
-                  className="w-full rounded-2xl border border-orange-500/40 bg-slate-950 px-4 py-2.5 text-xs sm:text-sm text-white focus:border-orange-400 focus:outline-none font-medium"
-                >
-                  <option value="ALL">🏪 ทุกร้านค้า / แหล่งที่มา</option>
-                  <option value="SHOPEE">🛍️ Shopee Mall & VIP</option>
-                  <option value="AIS">🌿 AIS Online Store</option>
-                  <option value="TRUE">🍒 True Official Store</option>
-                  <option value="BERTHONGSUK">🔮 ร้านเบอร์ทองสุข</option>
                 </select>
               </div>
             </div>
