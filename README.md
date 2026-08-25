@@ -94,3 +94,4 @@ npm run dev
 - **`/numbers/[id]` (เจาะลึกเบอร์):** หน้า Inspector ถอดรหัสคู่เลขทีละตำแหน่ง พร้อม AI Judge Second Opinion
 - **`/hunter` (ระบบบอท):** หน้าควบคุม Scheduled Hunter Jobs และ Realtime Execution Logs
 - **`/encyclopedia` (พจนานุกรม):** ฐานข้อมูลคู่เลข 00–99 และทักษา 8 วันเกิด
+"# lucky-number-ai"  "# lucky-number-ai" 
