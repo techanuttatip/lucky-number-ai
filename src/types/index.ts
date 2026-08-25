@@ -25,8 +25,12 @@ export type LifeGoal =
   | 'charm_love'    // มหาเสน่ห์ เมตตามหานิยม ความรักสมหวัง
   | 'prestige_power'// บารมี อำนาจ ลูกน้องยำเกรง เลื่อนขั้น
   | 'wisdom_peace'  // สติปัญญา สมาธิ อารมณ์เย็น ใจสงบ
+  | 'wisdom_study'  // สติปัญญา การเรียน
   | 'health_safety' // แคล้วคลาด สุขภาพดี ปลอดภัย
+  | 'luck_protection' // โชคลาภ แคล้วคลาด
   | 'luck_windfall';// โชคลาภ เสี่ยงโชค การเสี่ยงดวง
+
+export type EnergyGoal = LifeGoal;
 
 export type Provider = 'AIS' | 'TRUE' | 'DTAC' | 'NT' | 'OTHER';
 

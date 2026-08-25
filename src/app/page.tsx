@@ -47,19 +47,25 @@ export default function HomePage() {
           </p>
 
           {/* Action CTAs */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
             <Link
-              href="/wizard"
-              className="btn-cute-gold w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 text-base font-black text-slate-950"
+              href="/fortune"
+              className="btn-cute-gold w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 text-base font-black text-slate-950 shadow-xl hover:scale-105"
             >
               <Sparkles className="h-5 w-5 fill-slate-950" />
-              <span>เริ่มให้น้อง AI ช่วยเลือกเบอร์ ✨</span>
+              <span>🔮 ผูกดวง & วิเคราะห์เลขศาสตร์ชื่อ-สกุล ✨</span>
+            </Link>
+            <Link
+              href="/wizard"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl border border-pink-500/30 bg-pink-500/10 px-6 py-4 text-base font-bold text-pink-200 hover:text-white hover:bg-pink-500/20 transition-all"
+            >
+              <span>✨ ให้น้อง AI เสกเบอร์ตามใจ</span>
             </Link>
             <Link
               href="/numbers"
               className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/80 px-6 py-4 text-base font-bold text-slate-200 hover:text-white hover:bg-slate-800 transition-colors"
             >
-              <span>📱 ส่องเบอร์ทั้งหมดในคลัง</span>
+              <span>📱 ส่องคลังเบอร์</span>
             </Link>
           </div>
 

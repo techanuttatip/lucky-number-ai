@@ -9,7 +9,8 @@ export function Navbar() {
 
   const navItems = [
     { href: "/", label: "หน้าแรก", emoji: "🏠", icon: Flame },
-    { href: "/wizard", label: "น้อง AI เสกเบอร์", emoji: "✨", icon: Sparkles, highlight: true },
+    { href: "/fortune", label: "ผูกดวงเฉพาะบุคคล", emoji: "🔮", icon: Sparkles, highlight: true },
+    { href: "/wizard", label: "น้อง AI เสกเบอร์", emoji: "✨", icon: Sparkles },
     { href: "/numbers", label: "ส่องคลังเบอร์", emoji: "📱", icon: Search },
     { href: "/hunter", label: "บอทล่าเบอร์", emoji: "🤖", icon: Bot },
     { href: "/encyclopedia", label: "คัมภีร์คู่เลข", emoji: "📖", icon: BookOpen },
