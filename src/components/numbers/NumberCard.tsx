@@ -55,13 +55,21 @@ export function NumberCard({ numberData, rank, showAiBadge = true }: NumberCardP
           </span>
           {numberData.source && (
             <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
-              numberData.source.includes("Shopee")
-                ? "bg-orange-500/20 text-orange-300 border-orange-500/30"
-                : numberData.source.includes("Berthongsuk")
+              numberData.source.includes("Mobilesphone")
+                ? "bg-pink-500/20 text-pink-300 border-pink-500/30"
+                : numberData.source.includes("MoranetShop")
                 ? "bg-purple-500/20 text-purple-300 border-purple-500/30"
-                : "bg-slate-800 text-slate-300 border-slate-700"
+                : numberData.source.includes("7SIMNET")
+                ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                : "bg-orange-500/20 text-orange-300 border-orange-500/30"
             }`}>
-              {numberData.source.includes("Shopee") ? "🛍️ Shopee" : numberData.source.includes("Berthongsuk") ? "🔮 เบอร์ทองสุข" : "🌿 ค่ายตรง"}
+              {numberData.source.includes("Mobilesphone")
+                ? "📱 Mobilesphone"
+                : numberData.source.includes("MoranetShop")
+                ? "💎 MoranetShop"
+                : numberData.source.includes("7SIMNET")
+                ? "⚡ 7SIMNET"
+                : `🛍️ ${numberData.source}`}
             </span>
           )}
           <span className="text-xs text-slate-400 font-medium hidden sm:inline">

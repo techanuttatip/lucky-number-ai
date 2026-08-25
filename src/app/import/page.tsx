@@ -11,7 +11,8 @@ import {
   RefreshCw,
   ArrowRight,
   ShoppingBag,
-  ListPlus,
+  Store,
+  Link as LinkIcon,
   ShieldCheck,
   Star,
   ExternalLink,
@@ -19,14 +20,17 @@ import {
 import Link from "next/link";
 
 export default function BulkImportPage() {
+  const [storeName, setStoreName] = useState("Mobilesphone (Shopee)");
+  const [storeUrl, setStoreUrl] = useState("https://shopee.co.th/");
   const [inputText, setInputText] = useState("");
   const [provider, setProvider] = useState<Provider>("AIS");
-  const [source, setSource] = useState("Shopee");
-  const [defaultPrice, setDefaultPrice] = useState(2990);
+  const [defaultPrice, setDefaultPrice] = useState(1990);
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [importResult, setImportResult] = useState<{
+    storeName: string;
+    storeUrl: string;
     importedCount: number;
     numbers: ScoredNumber[];
     gradeSCount: number;
@@ -34,16 +38,15 @@ export default function BulkImportPage() {
     dangerousCount: number;
   } | null>(null);
 
-  const sampleShopeeText = `รายการเบอร์มงคลจาก Shopee:
-- 098-789-5665 ซิมมังกร 789 พลังมหาเศรษฐี 4,990.-
-- 096-695-9235 ผลรวม 54 ราชาโชค 69 95 92 35
-- 081-242-4656 ซิมมหาเสน่ห์ เมตตามหานิยม
-- 063-936-5459 เบอร์กวนอู โกยทรัพย์
-- 095-896-5415 ผลรวม 45 เทพประทาน`;
+  const presetStores = [
+    { name: "Mobilesphone (Shopee)", url: "https://shopee.co.th/search?keyword=Mobilesphone" },
+    { name: "MoranetShop (Shopee)", url: "https://shopee.co.th/search?keyword=MoranetShop" },
+    { name: "7SIMNET (Shopee)", url: "https://shopee.co.th/search?keyword=7SIMNET" },
+  ];
 
-  const handleSetSample = () => {
-    setInputText(sampleShopeeText);
-    setErrorMsg(null);
+  const handleSelectPreset = (preset: { name: string; url: string }) => {
+    setStoreName(preset.name);
+    setStoreUrl(preset.url);
   };
 
   const handleImport = async (e: React.FormEvent) => {
@@ -62,8 +65,9 @@ export default function BulkImportPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           text: inputText,
+          storeName,
+          storeUrl,
           provider,
-          source,
           price: defaultPrice,
         }),
       });
@@ -89,71 +93,103 @@ export default function BulkImportPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-xs font-bold text-orange-400 uppercase tracking-wider mb-1">
-              <span>🛍️ นำเข้าเบอร์จาก Shopee & ข้อความ</span>
+              <span>🛍️ นำเข้าเบอร์ & ลิงก์ร้านค้า Shopee</span>
             </div>
             <h1 className="text-3xl font-black text-white">
-              วางข้อความนำเข้าเบอร์ <span className="cute-gold-gradient">Bulk Importer 🌸</span>
+              เพิ่มเบอร์ & ผูกลิงก์ร้าน Shopee <span className="cute-gold-gradient">Store Importer 🌸</span>
             </h1>
             <p className="text-xs sm:text-sm text-slate-300/80 mt-1">
-              ก๊อปปี้ข้อความหรือรายการเบอร์จาก Shopee มาวาง ระบบจะสกัดตัวเลข คำนวณคะแนน 0–100 และเซฟลงฐานข้อมูลให้อัตโนมัติค่า
+              ใส่ชื่อร้านค้า ลิงก์ Shopee และวางรายการเบอร์ ระบบจะคำนวณคะแนน 0–100 และผูกลิงก์สั่งซื้อให้อัตโนมัติค่า
             </p>
           </div>
 
           <Link
-            href="/numbers"
+            href="/stores"
             className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-bold transition-all self-start sm:self-auto"
           >
-            <span>ดูคลังเบอร์ทั้งหมด</span>
+            <span>ดูหน้ารวมร้านค้า Shopee</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
         {/* Input Form Card */}
         <div className="cute-card p-6 sm:p-8 border-orange-500/30 bg-gradient-to-br from-orange-950/20 via-slate-900 to-slate-900 space-y-6">
-          <form onSubmit={handleImport} className="space-y-5">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-bold text-slate-200 flex items-center gap-2">
-                  <ClipboardPaste className="h-4 w-4 text-orange-400" />
-                  <span>วางข้อความหรือรายการเบอร์ที่คัดลอกมา (วางได้หลายเบอร์พร้อมกัน):</span>
-                </label>
+          {/* Quick Preset Buttons */}
+          <div>
+            <div className="text-xs font-bold text-slate-300 mb-2 flex items-center gap-1.5">
+              <span>🏪 เลือกร้านค้าที่มีอยู่ หรือพิมพ์ชื่อร้านใหม่:</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {presetStores.map((p) => (
                 <button
                   type="button"
-                  onClick={handleSetSample}
-                  className="text-[11px] font-bold text-orange-300 hover:text-orange-200 underline"
+                  key={p.name}
+                  onClick={() => handleSelectPreset(p)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                    storeName === p.name
+                      ? "bg-orange-500 text-white border-orange-400 shadow-md"
+                      : "bg-slate-950 text-slate-300 border-slate-700 hover:border-orange-400"
+                  }`}
                 >
-                  ลองใส่ตัวอย่างข้อความ Shopee ✨
+                  {p.name}
                 </button>
+              ))}
+            </div>
+          </div>
+
+          <form onSubmit={handleImport} className="space-y-5">
+            {/* Store Name & Store URL */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-200 mb-1.5 flex items-center gap-1.5">
+                  <Store className="h-4 w-4 text-orange-400" />
+                  <span>ชื่อร้านค้าใน Shopee</span>
+                </label>
+                <input
+                  type="text"
+                  value={storeName}
+                  onChange={(e) => setStoreName(e.target.value)}
+                  placeholder="เช่น Mobilesphone, MoranetShop, ร้านเบอร์มงคล 888..."
+                  className="w-full rounded-2xl border border-orange-500/40 bg-slate-950 px-4 py-2.5 text-xs sm:text-sm text-white focus:border-orange-400 focus:outline-none font-bold"
+                  required
+                />
               </div>
 
+              <div>
+                <label className="block text-xs font-bold text-slate-200 mb-1.5 flex items-center gap-1.5">
+                  <LinkIcon className="h-4 w-4 text-orange-400" />
+                  <span>ลิงก์ร้านค้า / ลิงก์สินค้าบน Shopee</span>
+                </label>
+                <input
+                  type="url"
+                  value={storeUrl}
+                  onChange={(e) => setStoreUrl(e.target.value)}
+                  placeholder="https://shopee.co.th/shop_name..."
+                  className="w-full rounded-2xl border border-orange-500/40 bg-slate-950 px-4 py-2.5 text-xs sm:text-sm text-white focus:border-orange-400 focus:outline-none font-mono"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Numbers Textarea */}
+            <div>
+              <label className="block text-xs font-bold text-slate-200 mb-2 flex items-center gap-1.5">
+                <ClipboardPaste className="h-4 w-4 text-orange-400" />
+                <span>วางรายการเบอร์โทรศัพท์ (วางได้หลายเบอร์พร้อมกัน หรือวางทั้งแคปชั่น):</span>
+              </label>
+
               <textarea
-                rows={6}
+                rows={7}
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="วางข้อความที่นี่ เช่น:&#10;098-789-5665 ซิมเบอร์มงคล 4,990 บาท&#10;0966959235 ผลรวม 54&#10;0812424656, 0639365459, 0958965415..."
+                placeholder="วางข้อความที่นี่ เช่น:&#10;097-4294441, 097-8249442, 063-9269441&#10;098-789-5665 ซิมมังกร 4,990 บาท&#10;0966959235 ผลรวม 54 ราชาโชค..."
                 className="w-full rounded-2xl border border-orange-500/40 bg-slate-950 p-4 text-xs sm:text-sm text-white focus:border-orange-400 focus:outline-none font-mono leading-relaxed"
                 required
               />
             </div>
 
-            {/* Config Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-800/80">
-              <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                  🏪 แหล่งที่มาของเบอร์
-                </label>
-                <select
-                  value={source}
-                  onChange={(e) => setSource(e.target.value)}
-                  className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-xs sm:text-sm text-white focus:border-pink-400 focus:outline-none"
-                >
-                  <option value="Shopee">🛍️ Shopee Mall & ร้านซิม</option>
-                  <option value="AIS Online Store">🌿 AIS Online Store</option>
-                  <option value="True Official Store">🍒 True Official Store</option>
-                  <option value="Berthongsuk">🔮 ร้านเบอร์ทองสุข</option>
-                </select>
-              </div>
-
+            {/* Price & Provider Options */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-800/80">
               <div>
                 <label className="block text-xs font-bold text-slate-300 mb-1.5">
                   🌿 ค่ายสัญญาณ (ค่าเริ่มต้น)
@@ -200,12 +236,12 @@ export default function BulkImportPage() {
                 {loading ? (
                   <>
                     <RefreshCw className="h-4 w-4 animate-spin" />
-                    <span>กำลังสกัดตัวเลขและคำนวณความมงคล...</span>
+                    <span>กำลังวิเคราะห์เลขศาสตร์และผูกลิงก์ร้าน...</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="h-4 w-4" />
-                    <span>✨ สกัดเบอร์ & คำนวณความมงคลเข้าคลังทันที 🚀</span>
+                    <span>✨ วิเคราะห์คะแนน & บันทึกเข้าคลังร้านค้าทันที 🚀</span>
                   </>
                 )}
               </button>
@@ -220,7 +256,7 @@ export default function BulkImportPage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="cute-card p-4 border-slate-800/80 text-center">
                 <div className="text-2xl font-black text-white">{importResult.importedCount}</div>
-                <div className="text-xs text-slate-400 font-bold mt-0.5">📱 สกัดพบทั้งหมด</div>
+                <div className="text-xs text-slate-400 font-bold mt-0.5">📱 เพิ่มเข้าร้าน {importResult.storeName}</div>
               </div>
 
               <div className="cute-card p-4 border-amber-500/40 bg-amber-950/20 text-center">
@@ -246,13 +282,13 @@ export default function BulkImportPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-black text-white flex items-center gap-2">
-                  <span>ผลการวิเคราะห์เบอร์ที่นำเข้า ({importResult.numbers.length} เบอร์)</span>
+                  <span>ผลการวิเคราะห์เบอร์ร้าน {importResult.storeName} ({importResult.numbers.length} เบอร์)</span>
                 </h2>
                 <Link
-                  href="/numbers"
-                  className="text-xs font-bold text-pink-400 hover:text-pink-300 flex items-center gap-1"
+                  href="/stores"
+                  className="text-xs font-bold text-orange-400 hover:text-orange-300 flex items-center gap-1"
                 >
-                  <span>ไปดูในคลังเบอร์สด</span>
+                  <span>ไปดูในหน้ารวมร้านค้า Shopee</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>

@@ -10,9 +10,10 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const rawText: string = body.text || "";
+    const storeName: string = body.storeName || body.source || "Shopee Store";
+    const storeUrl: string = body.storeUrl || body.shopUrl || `https://shopee.co.th/search?keyword=ซิมเบอร์มงคล`;
     const defaultProvider: Provider = body.provider || "AIS";
-    const defaultPrice: number = body.price ? parseInt(body.price, 10) : 2990;
-    const source: string = body.source || "Shopee";
+    const defaultPrice: number = body.price ? parseInt(body.price, 10) : 1990;
 
     if (!rawText.trim()) {
       return NextResponse.json(
@@ -22,7 +23,6 @@ export async function POST(req: NextRequest) {
     }
 
     // Regex match any 10-digit Thai phone number formats
-    // Matches: 0812345678, 081-234-5678, 081 234 5678, 096-695-9235, etc.
     const regex = /(0[689]\d{8}|0[689]\d{1}[-\s]\d{3}[-\s]\d{4}|0[689]\d{2}[-\s]\d{3}[-\s]\d{4}|0[689]\d{1}[-\s]\d{7})/g;
     const matches = rawText.match(regex) || [];
 
@@ -31,14 +31,21 @@ export async function POST(req: NextRequest) {
       new Set(
         matches
           .map((m) => m.replace(/\D/g, ""))
-          .filter((clean) => clean.length === 10 && (clean.startsWith("06") || clean.startsWith("08") || clean.startsWith("09")))
+          .filter(
+            (clean) =>
+              clean.length === 10 &&
+              (clean.startsWith("06") || clean.startsWith("08") || clean.startsWith("09"))
+          )
       )
     );
 
-    // If no regex match found, also check if user just pasted pure digits
+    // Pure digits check
     if (uniqueRawNumbers.length === 0) {
       const pureDigits = rawText.replace(/\D/g, "");
-      if (pureDigits.length === 10 && (pureDigits.startsWith("06") || pureDigits.startsWith("08") || pureDigits.startsWith("09"))) {
+      if (
+        pureDigits.length === 10 &&
+        (pureDigits.startsWith("06") || pureDigits.startsWith("08") || pureDigits.startsWith("09"))
+      ) {
         uniqueRawNumbers.push(pureDigits);
       }
     }
@@ -55,18 +62,24 @@ export async function POST(req: NextRequest) {
 
     // Process and score every number through the deterministic rule engine
     const scoredList: ScoredNumber[] = uniqueRawNumbers.map((cleanNum) => {
-      // Determine provider if mentioned near number or default
       let detectedProv: Provider = defaultProvider;
-      if (cleanNum.startsWith("09") || cleanNum.startsWith("08")) {
-        detectedProv = defaultProvider || "AIS";
+      if (cleanNum.startsWith("091") || cleanNum.startsWith("093") || cleanNum.startsWith("097") || cleanNum.startsWith("063")) {
+        detectedProv = "TRUE";
+      } else if (cleanNum.startsWith("08") || cleanNum.startsWith("098") || cleanNum.startsWith("095") || cleanNum.startsWith("065")) {
+        detectedProv = "AIS";
       }
+
+      // Build target Shopee Buy Link
+      const directBuyUrl = storeUrl.includes("shopee.co.th")
+        ? storeUrl
+        : `https://shopee.co.th/search?keyword=${encodeURIComponent(`ซิมเบอร์มงคล ${cleanNum}`)}`;
 
       return scorePhoneNumber(cleanNum, {
         provider: detectedProv,
-        source: source.includes("Shopee") ? "Shopee" : source,
+        source: storeName,
         price: defaultPrice,
-        packageDetail: `นำเข้าจาก ${source}`,
-        buyUrl: `https://shopee.co.th/search?keyword=${encodeURIComponent(`ซิมเบอร์มงคล ${cleanNum}`)}`,
+        packageDetail: `${storeName} • ผลรวม 10 หลัก`,
+        buyUrl: directBuyUrl,
       });
     });
 
@@ -80,18 +93,14 @@ export async function POST(req: NextRequest) {
     try {
       const supabasePayload = scoredList.map((s) => ({
         raw_number: s.rawNumber,
-        formatted_number: s.formattedNumber,
+        clean_number: s.rawNumber,
         provider: s.provider,
         price: s.price,
-        total_sum: s.totalSum,
-        total_score: s.totalScore,
-        pair_score: s.pairScore,
-        sum_score: s.sumScore,
-        is_top_candidate: s.isTopCandidate,
-        energy_profile: s.energyProfile,
-        source: s.source || "Shopee",
+        package_detail: `${s.source} • ผลรวม ${s.totalSum}`,
         buy_url: s.buyUrl,
-        created_at: new Date().toISOString(),
+        total_sum: s.totalSum,
+        status: "available",
+        is_active: true,
       }));
 
       await supabase.from("numbers").upsert(supabasePayload, { onConflict: "raw_number" });
@@ -102,6 +111,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       data: {
+        storeName,
+        storeUrl,
         importedCount: scoredList.length,
         numbers: scoredList,
         gradeSCount: scoredList.filter((n) => n.totalScore >= 90).length,
