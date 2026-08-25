@@ -44,6 +44,9 @@ export default function NumbersCatalogPage() {
       if (selectedSource !== "ALL") {
         const src = (n.source || "").toLowerCase();
         if (selectedSource === "SHOPEE" && !src.includes("shopee")) return false;
+        if (selectedSource === "MOBILES" && !src.includes("mobilesphone")) return false;
+        if (selectedSource === "MORANET" && !src.includes("moranet")) return false;
+        if (selectedSource === "SIM7" && !src.includes("7simnet")) return false;
         if (selectedSource === "AIS" && !src.includes("ais")) return false;
         if (selectedSource === "TRUE" && !src.includes("true")) return false;
         if (selectedSource === "BERTHONGSUK" && !src.includes("berthongsuk")) return false;
@@ -137,8 +140,11 @@ export default function NumbersCatalogPage() {
                 onChange={(e) => setSelectedSource(e.target.value)}
                 className="w-full rounded-2xl border border-orange-500/40 bg-slate-950 px-3.5 py-2 text-xs sm:text-sm text-white focus:border-orange-400 focus:outline-none font-medium"
               >
-                <option value="ALL">🏪 ทุกร้านค้า / แหล่งที่มา</option>
-                <option value="SHOPEE">🛍️ Shopee Mall & VIP</option>
+                <option value="ALL">🏪 ทุกร้านค้า / แหล่งที่มา (650+ เบอร์)</option>
+                <option value="MOBILES">📱 ร้าน Mobilesphone (Shopee)</option>
+                <option value="MORANET">💎 ร้าน MoranetShop (Shopee)</option>
+                <option value="SIM7">⚡ ร้าน 7SIMNET (Shopee)</option>
+                <option value="SHOPEE">🛍️ รวมร้าน Shopee ทั้งหมด</option>
                 <option value="AIS">🌿 AIS Online Store</option>
                 <option value="TRUE">🍒 True Official Store</option>
                 <option value="BERTHONGSUK">🔮 ร้านเบอร์ทองสุข</option>

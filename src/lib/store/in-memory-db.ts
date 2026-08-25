@@ -1,6 +1,7 @@
 import { ScoredNumber, HunterJob, SearchCriteria } from "@/types";
 import { INITIAL_CANDIDATE_POOL } from "../scraper/mock-pool";
 import { scorePhoneNumber } from "../numerology/scorer";
+import shopeePoolData from "../data/shopee-stores-pool.json";
 
 // Global singleton in-memory database
 class InMemoryDatabase {
@@ -15,17 +16,33 @@ class InMemoryDatabase {
   private initDefaultPool() {
     if (this.isInitialized) return;
     
-    // Seed default scored numbers
+    // Seed default candidate pool
     INITIAL_CANDIDATE_POOL.forEach((item) => {
       const scored = scorePhoneNumber(item.rawNumber, {
         id: `num_${item.rawNumber}`,
         provider: item.provider,
         price: item.price,
+        source: item.source,
         packageDetail: item.packageDetail,
         buyUrl: item.buyUrl,
       });
       this.numbers.set(scored.id, scored);
     });
+
+    // Seed 649 Shopee Store numbers (Mobilesphone, MoranetShop, 7SIMNET)
+    if (Array.isArray(shopeePoolData)) {
+      shopeePoolData.forEach((item: any) => {
+        const scored = scorePhoneNumber(item.rawNumber, {
+          id: `shopee_${item.rawNumber}`,
+          provider: item.provider,
+          price: item.price,
+          source: item.source,
+          packageDetail: `${item.source} • ผลรวม ${item.totalSum}`,
+          buyUrl: item.buyUrl || `https://shopee.co.th/search?keyword=ซิมเบอร์มงคล+${item.rawNumber}`,
+        });
+        this.numbers.set(scored.id, scored);
+      });
+    }
 
     // Seed sample scheduled jobs
     const sampleJob: HunterJob = {

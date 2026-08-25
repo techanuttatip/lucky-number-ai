@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sparkles, Search, Bot, BookOpen, Heart, Flame, ClipboardPaste } from "lucide-react";
+import { Sparkles, Search, Bot, BookOpen, Heart, Flame, ClipboardPaste, ShoppingBag } from "lucide-react";
 
 export function Navbar() {
   const pathname = usePathname();
 
   const navItems = [
     { href: "/", label: "หน้าแรก", emoji: "🏠", icon: Flame },
-    { href: "/fortune", label: "ผูกดวงเฉพาะบุคคล", emoji: "🔮", icon: Sparkles, highlight: true },
+    { href: "/stores", label: "ร้านซิม Shopee", emoji: "🛍️", icon: ShoppingBag, highlight: true },
+    { href: "/fortune", label: "ผูกดวงเฉพาะบุคคล", emoji: "🔮", icon: Sparkles },
     { href: "/import", label: "วางเบอร์ Shopee", emoji: "📥", icon: ClipboardPaste },
     { href: "/wizard", label: "น้อง AI เสกเบอร์", emoji: "✨", icon: Sparkles },
     { href: "/numbers", label: "ส่องคลังเบอร์", emoji: "📱", icon: Search },
