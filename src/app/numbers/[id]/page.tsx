@@ -9,6 +9,7 @@ import { BIRTH_RULES } from "@/lib/numerology/birth-rules";
 import { CAREER_RULES } from "@/lib/numerology/career-rules";
 import { PairBreakdownTable } from "@/components/analysis/PairBreakdownTable";
 import { AiVerdictCard } from "@/components/analysis/AiVerdictCard";
+import { BuyModal } from "@/components/numbers/BuyModal";
 import {
   ArrowLeft,
   ExternalLink,
@@ -20,6 +21,7 @@ import {
   Share2,
   Heart,
   Star,
+  ShoppingBag,
 } from "lucide-react";
 
 export default function NumberDetailsPage() {
@@ -30,6 +32,7 @@ export default function NumberDetailsPage() {
   const [numberData, setNumberData] = useState<ScoredNumber | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
 
   // Interactive profile simulator
   const [simBirthDay, setSimBirthDay] = useState<BirthDay>("sunday");
@@ -177,17 +180,13 @@ export default function NumberDetailsPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                {numberData.buyUrl && (
-                  <a
-                    href={numberData.buyUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-cute-gold flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-black text-slate-950"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    <span>ไปรับเบอร์นี้ที่ค่าย ({formatCurrency(numberData.price)})</span>
-                  </a>
-                )}
+                <button
+                  onClick={() => setIsBuyModalOpen(true)}
+                  className="btn-cute-gold flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-black text-slate-950 shadow-lg"
+                >
+                  <ShoppingBag className="h-4 w-4" />
+                  <span>วิธีสั่งซื้อ & เป็นเจ้าของเบอร์นี้ ({formatCurrency(numberData.price)}) 🛒</span>
+                </button>
                 <a
                   href={`https://berthongsuk.in.th/%e0%b8%a7%e0%b8%b4%e0%b9%80%e0%b8%84%e0%b8%a3%e0%b8%b2%e0%b8%b0%e0%b8%ab%e0%b9%8c%e0%b9%80%e0%b8%9a%e0%b8%ad%e0%b8%a3%e0%b9%8c%e0%b8%a1%e0%b8%87%e0%b8%84%e0%b8%a5/?num=${numberData.rawNumber}`}
                   target="_blank"
@@ -202,6 +201,13 @@ export default function NumberDetailsPage() {
             </div>
           </div>
         </div>
+
+        {/* Buy & Ownership Modal */}
+        <BuyModal
+          isOpen={isBuyModalOpen}
+          onClose={() => setIsBuyModalOpen(false)}
+          numberData={numberData}
+        />
 
         {/* 4 Score Breakdown Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
